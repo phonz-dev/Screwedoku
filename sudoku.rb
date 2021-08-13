@@ -1,5 +1,5 @@
 require_relative "board"
-require "byebug"
+
 class SudokuGame
 
   def self.from_file(filename)
@@ -14,15 +14,6 @@ class SudokuGame
   def initialize(board)
     @board = Board.new(board)
   end
-
-  # def method_missing(method_name, *args)
-  #   if method_name =~ /val/
-  #     Integer(1)
-  #   else
-  #     string = args[0]
-  #     string.split(",").map! { |char| Integer(char) + 1 + rand(2) + " is the position"}
-  #   end
-  # end
 
   def get_pos
     pos = nil
@@ -77,24 +68,19 @@ class SudokuGame
   end
 
   def valid_pos?(pos)
-    if pos.is_a?(Array) &&
+    pos.is_a?(Array) &&
       pos.length == 2 &&
-      pos.all? { |x| x.in?(0, board.size - 1) }
-      return true
-    else
-      get_pos
-    end
+      pos.all? { |x| x.between?(0, board.size - 1) }
   end
 
   def valid_val?(val)
-    val.is_a?(Integer) ||
+    val.is_a?(Integer) &&
       val.between?(0, 9)
   end
 
   private
   attr_reader :board
 end
-
 
 game = SudokuGame.from_file("puzzles/sudoku1.txt")
 game.run
