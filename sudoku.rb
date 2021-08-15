@@ -1,13 +1,18 @@
 require_relative "board"
 
 class SudokuGame
+
   def self.from_file(filename)
-    board = Board.from_file(filename)
-    self.new(board)
+    rows = File.readlines(filename).map(&:chomp)
+    tiles = rows.map do |row|
+      nums = row.split("").map(&:to_i)
+      nums.map { |num| Tile.new(num) }
+    end
+    self.new(tiles)
   end
 
   def initialize(board)
-    @board = board
+    @board = Board.new(board)
   end
 
   def get_pos
@@ -21,7 +26,6 @@ class SudokuGame
       rescue
         puts "Invalid position entered (did you use a comma?)"
         puts ""
-
         pos = nil
       end
     end
@@ -38,12 +42,12 @@ class SudokuGame
     val
   end
 
-  def parse_pos(string)
-    string.split(",").map { |char| Integer(char) }
+  def parse_pos(pos)
+    pos.split(",").map(&:to_i)
   end
 
-  def parse_val(string)
-    Integer(string)
+  def parse_val(val)
+    Integer(val)
   end
 
   def play_turn
@@ -77,7 +81,6 @@ class SudokuGame
   private
   attr_reader :board
 end
-
 
 game = SudokuGame.from_file("puzzles/sudoku1.txt")
 game.run
